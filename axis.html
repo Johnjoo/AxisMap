@@ -33,7 +33,7 @@
                 },
                 getMapType = function(floor) {
                     var commonOptions = {
-                            name: '',
+                            name: '이름',
                             minZoom: 0,
                             maxZoom: 4,
                             tileSize: tileSize,
@@ -68,12 +68,13 @@
                 mapTypeControl: true,
                 mapTypeControlOptions: {
                     mapTypeIds: ['+1F', '+2F', '+4F', '+5F'],
-                    position: naver.maps.Position.BOTTOM_CENTER,
-                    style: naver.maps.MapTypeControlStyle.BUTTON
+                    //position: naver.maps.Position.BOTTOM_CENTER,  // 위치 생략하면 오른쪽 위에 표시
+                    //style: naver.maps.MapTypeControlStyle.BUTTON // 드롭다운 방식과 하단에 표시하는 방식
+                    style: naver.maps.MapTypeControlStyle.DROPDOWN
                 },
                 zoomControl: true,
                 zoomControlOptions: {
-                    //style: naver.maps.ZoomControlStyle.SMALL,
+                    //style: naver.maps.ZoomControlStyle.SMALL, // + - 버튼만 작게 생성 중간없음
                     position: naver.maps.Position.TOP_RIGHT
                 }
             });
