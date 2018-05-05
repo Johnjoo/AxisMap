@@ -109,52 +109,52 @@
 			                        '<span style="font-weight: bold;"> Brown </span>' +
 			                        '</div>')
 			*/
-            var varthis;
-			    varthis._element = $('<div style="position:absolute;left:10;top:10;width:50px;text-align:center;border:1px solid #6C483B;"> ' +
+            
+			    this._element = $('<div style="position:absolute;left:10;top:10;width:50px;text-align:center;border:1px solid #6C483B;"> ' +
 			                          '<span style="font-weight: bold;"> 1층 </span>' +
 			                      '</div>')
 
 
-			    varthis.setPosition(options.position);
-			    varthis.setMap(options.map || null);
+			    this.setPosition(options.position);
+			    this.setMap(options.map || null);
 			};
 
 			CustomOverlay.prototype = new naver.maps.OverlayView();
 			CustomOverlay.prototype.constructor = CustomOverlay;
 
 			CustomOverlay.prototype.setPosition = function(position) {
-			    varthis._position = position;
-			    varthis.draw();
+			    this._position = position;
+			    this.draw();
 			};
 
 			CustomOverlay.prototype.getPosition = function() {
-			    return varthis._position;
+			    return this._position;
 			};
 
 			CustomOverlay.prototype.onAdd = function() {
-			    var overlayLayer = varthis.getPanes().overlayLayer;
+			    var overlayLayer = this.getPanes().overlayLayer;
 
-			    varthis._element.appendTo(overlayLayer);
+			    this._element.appendTo(overlayLayer);
 			};
 
 			CustomOverlay.prototype.draw = function() {
-			    if (!varthis.getMap()) {
+			    if (!this.getMap()) {
 			        return;
 			    }
 
-			    var projection = varthis.getProjection(),
-			        position = varthis.getPosition(),
+			    var projection = this.getProjection(),
+			        position = this.getPosition(),
 			        pixelPosition = projection.fromCoordToOffset(position);
 
-			    varthis._element.css('left', pixelPosition.x);
-			    varthis._element.css('top', pixelPosition.y);
+			    this._element.css('left', pixelPosition.x);
+			    this._element.css('top', pixelPosition.y);
 			};
 
 			CustomOverlay.prototype.onRemove = function() {
-			    var overlayLayer = varthis.getPanes().overlayLayer;
+			    var overlayLayer = this.getPanes().overlayLayer;
 
-			    varthis._element.remove();
-			    varthis._element.off();
+			    this._element.remove();
+			    this._element.off();
 			};
 
 
