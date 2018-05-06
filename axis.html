@@ -11,6 +11,13 @@
     </HEAD>
     <BODY>
     <div id="map" style="width:100%;height:650px;"></div>
+    <!-- 
+    TOP_LEFT      TOP_CENTER       TOP_RIGHT
+    LEFT_TOP                       RIGHT_TOP
+	LEFT_CENTER                    RIGHT_CENTER
+	LEFT_BOTTOM                    RIGHT_BOTTOM
+	BOTTOM_LEFT   BOTTOM_CENTER    BOTTOM_RIGHT
+     //-->
     <script>
         //var HOME_PATH = window.HOME_PATH || '.';
         var FILE_PATH = "image"
@@ -54,30 +61,118 @@
                 };
 
 
+			   
             var map = new naver.maps.Map('map', {
                 center: new naver.maps.Point(128, 128),
-                zoom: 2,
+                zoom: 1,
                 background: '#FFFFFF',
                 mapTypes: new naver.maps.MapTypeRegistry({
                     '+1F': getMapType('1F'),
                     '+2F': getMapType('2F'),
                     '+4F': getMapType('4F'),
-                    '+5F': getMapType('5F'),
+                    'fiveF': getMapType('5F'),
                 }),
                 mapTypeId: '+1F',
                 mapTypeControl: true,
                 mapTypeControlOptions: {
-                    mapTypeIds: ['+1F', '+2F', '+4F', '+5F'],
-                    //position: naver.maps.Position.BOTTOM_CENTER,  // 위치 생략하면 오른쪽 위에 표시
-                    //style: naver.maps.MapTypeControlStyle.BUTTON // 드롭다운 방식과 하단에 표시하는 방식
-                    style: naver.maps.MapTypeControlStyle.DROPDOWN
+                    mapTypeIds: ['+1F', '+2F', '+4F', 'fiveF'],                    
+                    style: naver.maps.MapTypeControlStyle.BUTTON, // 드롭다운 방식과 하단에 표시하는 방식
+                    //style: naver.maps.MapTypeControlStyle.DROPDOWN
+                    position: naver.maps.Position.BOTTOM_CENTER,  // 위치 생략하면 오른쪽 위에 표시
+                    //position: naver.maps.Position.TOP_RIGHT,  // 위치 생략하면 오른쪽 위에 표시
                 },
                 zoomControl: true,
                 zoomControlOptions: {
                     //style: naver.maps.ZoomControlStyle.SMALL, // + - 버튼만 작게 생성 중간없음
                     position: naver.maps.Position.TOP_RIGHT
-                }
+                    //position: naver.maps.Position.TOP_LEFT,  // 위치 생략하면 왼쪽 위에 표시
+                    //position: naver.maps.Position.TOP_CENTER,  // 위치 생략하면 왼쪽 위에 표시
+                },
             });
+
+
+            //customControl 객체를 이용하기
+            var locationBtnHtml = '<a href="https://www.naver.com" class="btn_mylct"><span class="spr_trff spr_ico_mylct">링크 걸기</span></a>';
+            var customControl = new naver.maps.CustomControl(locationBtnHtml, {
+                position: naver.maps.Position.TOP_LEFT
+            });
+
+            customControl.setMap(map);
+
+
+            //CustomOverlay 사용자 정의 오버레이 이용하기
+            
+			var CustomOverlay = function(options) {
+			/*
+			    this._element = $('<div style="position:absolute;left:0;top:0;width:124px;background-color:#F2F0EA;text-align:center;border:2px solid #6C483B;">' +
+			                        '<img src="./img/example/brown.png" style="width: 120px; height:130px">' +
+			                        '<span style="font-weight: bold;"> Brown </span>' +
+			                        '</div>')
+			*/
+            var varthis;
+			    varthis._element = $('<div style="position:absolute;left:10;top:10;width:50px;text-align:center;border:1px solid #6C483B;"> ' +
+			                          '<span style="font-weight: bold;"> 1층 </span>' +
+			                      '</div>')
+
+
+			    varthis.setPosition(options.position);
+			    varthis.setMap(options.map || null);
+			};
+
+			CustomOverlay.prototype = new naver.maps.OverlayView();
+			CustomOverlay.prototype.constructor = CustomOverlay;
+
+			CustomOverlay.prototype.setPosition = function(position) {
+			    varthis._position = position;
+			    varthis.draw();
+			};
+
+			CustomOverlay.prototype.getPosition = function() {
+			    return varthis._position;
+			};
+
+			CustomOverlay.prototype.onAdd = function() {
+			    var overlayLayer = varthis.getPanes().overlayLayer;
+
+			    varthis._element.appendTo(overlayLayer);
+			};
+
+			CustomOverlay.prototype.draw = function() {
+			    if (!varthis.getMap()) {
+			        return;
+			    }
+
+			    var projection = varthis.getProjection(),
+			        position = varthis.getPosition(),
+			        pixelPosition = projection.fromCoordToOffset(position);
+
+			    varthis._element.css('left', pixelPosition.x);
+			    varthis._element.css('top', pixelPosition.y);
+			};
+
+			CustomOverlay.prototype.onRemove = function() {
+			    var overlayLayer = varthis.getPanes().overlayLayer;
+
+			    varthis._element.remove();
+			    varthis._element.off();
+			};
+
+
+			var position = new naver.maps.LatLng(128, 128);
+
+			var overlay = new CustomOverlay({
+			    map: map,
+			    position: position
+			});
+/*
+			naver.maps.Event.addListener(map, 'click', function(e) { //클릭한 위치에 오버레이를 추가합니다.
+			    var overlay = new CustomOverlay({
+			        position: e.coord
+			    });
+
+			    overlay.setMap(map);
+			});
+*/
 
 
         </script>
