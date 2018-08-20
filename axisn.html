@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<HTML>
+    <HEAD>
+        <META CHARSET="UTF-8">
+        <TITLE>주희찬 프로젝트</TITLE>        
+        <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=m3DjKJoUiKdcSseOzanL&callback=initMap"></script>
+        <!-- <script  type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> -->
+        <SCRIPT type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.js"></SCRIPT>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    </HEAD>
+    <BODY>
+    <div id="map" style="width:100%;height:800px;"></div>
+    <!-- 
+    TOP_LEFT      TOP_CENTER       TOP_RIGHT
+    LEFT_TOP                       RIGHT_TOP
+	LEFT_CENTER                    RIGHT_CENTER
+	LEFT_BOTTOM                    RIGHT_BOTTOM
+	BOTTOM_LEFT   BOTTOM_CENTER    BOTTOM_RIGHT
+     //-->
+    <script>
+
+/*
+
+var map = new naver.maps.Map('map', {
+    center: new naver.maps.LatLng(37.3595704, 127.105399),
+    zoom: 10,
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+        style: naver.maps.MapTypeControlStyle.DROPDOWN
+    }
+});
+
+
+
+
+var openStreetMapType = new naver.maps.ImageMapType({
+    name: 'OSM',
+    minZoom: 0,
+    maxZoom: 19,
+    tileSize: new naver.maps.Size(256, 256),
+    projection: naver.maps.EPSG3857,
+    repeatX: true,
+    tileSet: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    provider: [{
+        title: " /OpenStreetMap", // 출처 표기는 이미지 제공처의 정첵을 따라야 합니다.
+        link: "http://www.openstreetmap.org/copyright"
+    }]
+});
+
+map.mapTypes.set('osm', openStreetMapType);
+map.setMapTypeId('osm');
+
+*/
+
+
+
+
+
+
+
+
+
+      //var HOME_PATH = window.HOME_PATH || '.';
+        var FILE_PATH = "image"
+
+            var tileSize = new naver.maps.Size(256, 256),
+                proj = {
+                    fromCoordToPoint: function(coord) {
+                        var pcoord = coord.clone();
+
+                        if (coord instanceof naver.maps.LatLng) {
+                            pcoord = new naver.maps.Point(coord.lng(), coord.lat());
+                        }
+
+                        return pcoord.div(tileSize.width, tileSize.height);
+                    },
+
+                    fromPointToCoord: function(point) {
+                        return point.clone().mul(tileSize.width, tileSize.height);
+                    }
+                },
+                getMapType = function(layerName) {
+                    //layerName은 getMapType('가이드맵')
+                    var floor = layerName.substring(layerName.indexOf("_")+1,layerName.length); 
+                    // 가이드맵_1F _ 를 중심으로 자르기(가이드맵 | 1F) 
+                    var commonOptions = {
+                            name: 'Axis name',
+                            minZoom: 0,
+                            maxZoom: 4,
+                            tileSize: tileSize,
+                            projection: proj,
+                            repeatX: false,
+//                            tileSet: 'AXIS Project',
+                            vendor: '\xa9 make by HeeChan Joo.',
+                            uid: ''
+                        },
+                        mapTypeOptions = $.extend({}, commonOptions, {
+                            name: layerName,
+                            tileSet: FILE_PATH +'/layer/gf-{floor}/{z}/{x}-{y}.png'.replace('{floor}', floor.toLowerCase()),
+                           // tileSet: FILE_PATH +'/layer/images/images1x1/Untitled-1_01.png'.replace('{floor}', floor.toLowerCase()),
+                            uid: 'English-village:' + floor
+                           // uid: 'blizzard:starcraft:the-hunters'
+                        });
+
+                    return new naver.maps.ImageMapType(mapTypeOptions);
+                };
+
+            //var map = new naver.maps.Map('map'); //==        var map = new naver.maps.Map(document.getElementById('map'));
+            var map = new naver.maps.Map('map', {
+                center: new naver.maps.Point(128, 128),
+                zoom: 0,
+                background: '#FFFFFF',
+                mapTypes: new naver.maps.MapTypeRegistry({
+                    '+1F': getMapType('가이드맵_1F'),
+                    '+2F': getMapType('조감도_2F'),
+                    '+3F': getMapType('레이어층_3F'),
+                    '+4F': getMapType('면적_4F'),
+                    '+5F': getMapType('원어민숙소_5F'),
+                    '+6F': getMapType('가로등_6F'),
+                    '+7F': getMapType('스피커_7F'),
+                    '+8F': getMapType('GHP_8F'),
+                    '+9F': getMapType('보일러_9F'),
+                }),
+                mapTypeId: '+1F',
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    mapTypeIds: ['+1F', '+2F', '+3F', '+4F' , '+5F', '+6F', '+7F', '+8F', '+9F'],
+                    //position: naver.maps.Position.BOTTOM_CENTER,  // 위치 생략하면 오른쪽 위에 표시
+                    //style: naver.maps.MapTypeControlStyle.BUTTON // 드롭다운 방식과 하단에 표시하는 방식
+                    style: naver.maps.MapTypeControlStyle.DROPDOWN
+                },
+                zoomControl: true,
+                zoomControlOptions: {
+                    //style: naver.maps.ZoomControlStyle.SMALL, // + - 버튼만 작게 생성 중간없음
+                    position: naver.maps.Position.TOP_RIGHT
+                    //position: naver.maps.Position.TOP_LEFT,  // 위치 생략하면 왼쪽 위에 표시
+                    //position: naver.maps.Position.TOP_CENTER,  // 위치 생략하면 왼쪽 위에 표시
+                }
+            });
+
+
+
+
+
+/*
+var rectangle = new naver.maps.Rectangle({
+    map: map,
+    bounds: new naver.maps.LatLngBounds(
+        new naver.maps.Point(128, 128),
+        new naver.maps.LatLng(200, 200)
+    )
+});
+
+*/
+
+
+
+
+
+    var polygon = new naver.maps.Polygon({
+        paths: [		
+			[
+				new naver.maps.Point(140, 100),
+				new naver.maps.Point(120, 150),
+				new naver.maps.Point(150, 150),
+				new naver.maps.Point(150, 120)
+			]
+		],
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35,
+        zIndex: 1,
+        clickable: true,
+        map: map
+    });
+
+
+
+
+    naver.maps.Event.addListener(polygon, "mouseover", function(e) {
+        map.setCursor("pointer");
+
+        polygon.setOptions({
+            fillOpacity: 0.8
+        });
+    });
+
+    naver.maps.Event.addListener(polygon, "mouseout", function(e) {
+        map.setCursor("auto");
+
+        polygon.setOptions({
+            fillOpacity: 0.35
+        });
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+var labelMapTypeOptions = {
+    name: '라벨 지도',
+    //minZoom: 0,
+    //maxZoom: 4,
+    projection: proj,
+    tileSize: new naver.maps.Size(256, 256),
+    repeatX: true,
+    vendor: 'MyCorp.',
+    tileSet: [FILE_PATH +'/tiles/gf-{floor}/{z}/{x}-{y}.png'.replace('{floor}', floor.toLowerCase()),]
+    /*
+    tileSet: [
+        'https://mts1.googleapis.com/vt?lyrs=m@234000000&src=apiv3&hl=ko-KR+&x={x}&y={y}&z={z}&style=50,37%7Csmartmaps',    
+    ]
+    */
+};
+
+var labelMapType = new naver.maps.ImageMapType(labelMapTypeOptions);
+
+var labelMapTypeRegistry = new naver.maps.MapTypeRegistry({
+    'labelLayer': labelMapType
+});
+
+var labelLayer = new naver.maps.Layer('labelLayer', labelMapTypeRegistry);
+labelLayer.setMap(map);
+
+
+
+$('#labelLayer').on('click', function(e) {
+    e.preventDefault();
+
+    var btn = $(this);
+
+    if (labelLayer.getMap()) {
+        labelLayer.setMap(null);
+        btn.removeClass('control-on').val('POI 켜기 ');
+    } else {
+        labelLayer.setMap(map);
+        btn.addClass('control-on').val('POI 끄기 ');
+    }
+});
+
+
+
+
+
+
+
+
+        </script>
+    </BODY>
+</HTML>
